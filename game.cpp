@@ -49,7 +49,7 @@ Game::Game(QString country_file_name, QString player_floder, QString timeplace_f
         else if (match->id <= 62)
             match->stage = SEMI_FINALS;
         else
-            match->stage = Final;
+            match->stage = FINAL;
         matches.push_back(match);
     }
     timeplace_file.close();
@@ -63,6 +63,11 @@ void Game::playGame()
     t1_showQuaified();
     groups = t2_divideGroups(name2team);
     t3_groupStageMatches();
+    t4_t7_knockoutStageMatches(ROUND_OF_16);
+    t4_t7_knockoutStageMatches(QUARTER_FINALS);
+    t4_t7_knockoutStageMatches(SEMI_FINALS);
+    t4_t7_knockoutStageMatches(FINAL);
+    t8_showWholeGameStats();
 }
 
 pots_t Game::prepare_pots()
@@ -200,7 +205,7 @@ groups_t Game::t2_divideGroups(name2team_map_t& name2team)
     return drawFromPots(name2team, pots);
 }
 
-std::vector<NationalTeam*> Game::sortGroupRank(const std::vector<NationalTeam *> &to_sort)
+std::vector<NationalTeam*> Game::sortRank(const std::vector<NationalTeam *> &to_sort, stage_t stage)
 {
     std::map<NationalTeam*, NationalTeam*> disjoint_father;
     for(auto pteam : to_sort) {
@@ -241,11 +246,6 @@ std::vector<NationalTeam*> Game::sortGroupRank(const std::vector<NationalTeam *>
     auto rule_a_to_c_without_side_effect  = std::bind(_rule_a_to_c, _1, _2, false);
 
     auto rule_d_to_h = [&](const std::pair<MatchSummary, NationalTeam*>& t1, const std::pair<MatchSummary, NationalTeam*>& t2) {
-//        qDebug() << "In rule d to h";
-//        qDebug() << "Pts:" << t1.second->name << t1.first.getPts() <<t2.second->name << t2.first.getPts();
-//        qDebug() << "GD:" << t1.second->name << t1.first.getGD() <<t2.second->name << t2.first.getGD();
-//        qDebug() << "GF:" << t1.second->name << t1.first.getGF() <<t2.second->name << t2.first.getGF();
-//        qDebug() << "Pts_concern:" << t1.second->name << t1.first.getPts_concern_card() <<t2.second->name << t2.first.getPts_concern_card();
         if(t1.first.getPts() != t2.first.getPts()) {
             return t1.first.getPts() > t2.first.getPts();
         } else if (t1.first.getGD() != t2.first.getGD()) {
@@ -259,90 +259,64 @@ std::vector<NationalTeam*> Game::sortGroupRank(const std::vector<NationalTeam *>
         }
     };
 
-    auto _packer = [](const std::vector<NationalTeam*>& to_sort, bool concerned) {
+    auto _packer = [&](const std::vector<NationalTeam*>& to_sort, bool concerned) {
         std::vector<std::pair<MatchSummary, NationalTeam*> > ret;
         for(NationalTeam* pteam : to_sort) {
-//            if(to_sort.size() != 4) qDebug() << "### " << pteam->name << "Play with";
             MatchSummary summ;
             if(concerned) {
                 for(NationalTeam* co_pteam : to_sort) {
                     if(co_pteam == pteam)
                         continue;
                     else {
-//                        if(to_sort.size() != 4) {
-//                            qDebug() << co_pteam->name;
-//                            for(auto i :pteam->co_country_summaries[co_pteam].get()) {
-//                                qDebug() << i;
-//                            }
-//                        }
                         summ.merge(pteam->co_country_summaries[co_pteam]);
                     }
                 }
-//                if(to_sort.size() != 4) {
-//                    qDebug() << "**** summ:";
-//                    for(auto i :summ.get()) {
-//                        qDebug() << i;
-//                    }
-//                    qDebug() << "**** right:" ;
-//                    for(auto i :pteam->match_summaries[GROUP_STAGE].get()) {
-//                        qDebug() << i;
-//                    }
-//                }
             } else {
-                summ = pteam->match_summaries[GROUP_STAGE];
+                summ = pteam->match_summaries[stage];
             }
             ret.push_back(std::make_pair(summ, pteam));
         }
         return ret;
     };
     auto packer_concerned_team  = std::bind(_packer, _1, true);
-    auto packer_group_stage  = std::bind(_packer, _1, false);
-    auto packed = packer_group_stage(to_sort);
+    auto packer_whole_stage  = std::bind(_packer, _1, false);
+    auto packed = packer_whole_stage(to_sort);
     std::sort(packed.begin(), packed.end(), rule_a_to_c_side_effect);
-    while(!equal.empty()) {
-//        qDebug() << equal.size();
-//        for(auto i : equal) {
-//            qDebug() << '\t' << i->name;
-//        }
-        std::vector<NationalTeam*> to_sort_still_equal;
-        auto pteamRoot = *(equal.begin());
-        for(auto pteam : to_sort) {
-            if(disjoint_find(pteam) == disjoint_find(pteamRoot)) {
-                to_sort_still_equal.push_back(pteam);
- //               qDebug() << "1. Found " << pteam->name << " and " << pteamRoot->name << " are same ";
-                equal.erase(pteam);
+    if(stage == GROUP_STAGE) {
+        while(!equal.empty()) {
+            std::vector<NationalTeam*> to_sort_still_equal;
+            auto pteamRoot = *(equal.begin());
+            for(auto pteam : to_sort) {
+                if(disjoint_find(pteam) == disjoint_find(pteamRoot)) {
+                    to_sort_still_equal.push_back(pteam);
+                    equal.erase(pteam);
+                }
             }
-        }
-
-        auto packed_still_equal = packer_group_stage(to_sort_still_equal);
-        std::sort(packed_still_equal.begin(), packed_still_equal.end(), rule_a_to_c_without_side_effect);
-        auto p1 = packed_still_equal.front();
-        auto p2 = packed_still_equal.back();
-        auto it1 = std::find_if(packed.begin(), packed.end(), [p1](auto p) {
-            return p.second == p1.second;
-        });
-        auto it2 = std::find_if(packed.begin(), packed.end(), [p2](auto p) {
-            return p.second == p2.second;
-        });
-//        qDebug() << "it1 points " << it1->second->name << "\t" << std::distance(packed.begin(), it1);
-//        qDebug() << "it2 points " << it2->second->name << "\t" << std::distance(packed.begin(), it2);
-        auto packed_concerned = packer_concerned_team(to_sort_still_equal);
+            auto packed_still_equal = packer_whole_stage(to_sort_still_equal);
+            std::sort(packed_still_equal.begin(), packed_still_equal.end(), rule_a_to_c_without_side_effect);
+            auto p1 = packed_still_equal.front();
+            auto p2 = packed_still_equal.back();
+            auto it1 = std::find_if(packed.begin(), packed.end(), [p1](auto p) {
+                return p.second == p1.second;
+            });
+            auto it2 = std::find_if(packed.begin(), packed.end(), [p2](auto p) {
+                return p.second == p2.second;
+            });
+            auto packed_concerned = packer_concerned_team(to_sort_still_equal);
             std::sort(packed_concerned.begin(), packed_concerned.end(), rule_d_to_h);
             if(it1 > it2)
                 throw(std::runtime_error("it1 > it2"));
             for(auto it = it1; it <= it2; ++it) {
                 *it = packed_still_equal[std::distance(it1, it)];
             }
-//        for(size_t i = 0; i < packed_still_equal.size(); ++i) {
-//            (it1+i)->first = packed_still_equal[i].first;
-//        }
-//        std::sort(it1, it2 + 1, rule_d_to_h);
+        }
     }
     std::vector<NationalTeam*> sorted;
     for(auto p : packed)
         sorted.push_back(p.second);
     return sorted;
 }
+
 
 void Game::t3_1_showGroupMatches()
 {
@@ -367,7 +341,7 @@ void Game::t3_2_playGroupMatches()
     for(int i = 0; i < 48; ++ i) {
         ss << matches[i]->playMatch(name2team);
     }
-    dualPrint(*text, "Result16.txt");
+    std::cout << text->toStdString();
     delete text;
 }
 
@@ -384,7 +358,7 @@ void Game::t3_3_summaryGroupMatches()
           for(auto team : groups[i]) {
               to_sort.push_back(team);
           }
-          auto sorted = sortGroupRank(to_sort);
+          auto sorted = sortRank(to_sort, GROUP_STAGE);
           for(int j = 0; j < 4; ++j) {
               auto team = sorted[j];
               if(j == 0) {
@@ -408,9 +382,160 @@ void Game::t3_3_summaryGroupMatches()
     delete text;
 }
 
+void Game::t3_4_showNextTeams() {
+    QString* text = new QString;
+    QTextStream ss(text);
+    ss << "Qualified for round of 16:" << endl;
+    for(auto t : teams16) {
+        ss << teamNameEx(t) << endl;
+    }
+    dualPrint(*text, "team16.txt");
+    delete text;
+
+}
+
 void Game::t3_groupStageMatches()
 {
     t3_1_showGroupMatches();
     t3_2_playGroupMatches();
     t3_3_summaryGroupMatches();
+    t3_4_showNextTeams();
+}
+
+void Game::t4_t7_showKnockoutMatches(stage_t stage)
+{
+    QString* text = new QString;
+    QTextStream ss(text);
+    ss << "Schedule for " << stage_name_lowercase[stage] << ":" << endl;
+    for(int j = stage_start_match[stage]; j < stage_start_match[stage] + stage_match_num[stage]; ++j) {
+        ss << " " << matches[j]->showMatchInfo(name2team) << endl;
+    }
+    dualPrint(*text, "schedule" + QString::number(stage_filename_idx[stage]) + ".txt");
+    delete text;
+}
+
+void Game::t4_t7_playKnockoutMatches(stage_t stage)
+{
+    QString* text = new QString;
+    QTextStream ss(text);
+    ss << stage_name_uppercase[stage] + " stage:" << endl;
+    for(int i = stage_start_match[stage]; i < stage_start_match[stage] + stage_match_num[stage]; ++ i) {
+        ss << matches[i]->playMatch(name2team);
+        auto result = matches[i]->getMatchResult();
+        auto pwinner_team = result.pteam[result.winner_idx];
+        auto plosser_team = result.pteam[!result.winner_idx];
+        name2team["Winner Match " + QString::number(i + 1)] = pwinner_team;
+        name2team["Loser Match " + QString::number(i + 1)] = plosser_team;
+        if(matches[i]->id == 64) {
+            name2team["Champion"] = pwinner_team;
+            name2team["Second"] = plosser_team;
+        }
+        if(matches[i]->id == 63) {
+            name2team["Third"] = pwinner_team;
+        }
+    }
+    std::cout << text->toStdString();
+    delete text;
+}
+
+void Game::t4_t7_summaryKnockoutMatches(stage_t stage)
+{
+    QString* text = new QString;
+    QTextStream ss(text);
+    ss << "Final result for " << stage_name_lowercase[stage] << " " << endl;
+    ss << qSetFieldWidth(20) << left << "Team";
+    ss << reset;
+    ss << "\tW\tD\tL\tGF\tGA\tGD\tPts" << endl;
+    teams16 = sortRank(teams16, stage);
+//    std::vector<NationalTeam*> to_sort;
+//    for(auto team : teams16) {
+//        to_sort.push_back(team);
+//    }
+//    auto sorted = sortRank(to_sort, stage);
+    for(int j = 0; j < stage_team_num[stage]; ++j) {
+        auto team = teams16[j];
+//        if(stage != FINAL && j < stage_team_num[stage + 1]) {
+//            auto it = std::find(sorted.begin(), sorted.end(), team);
+//            std::iter_swap(it, teams16.begin() + j);
+//        }
+        ss << qSetFieldWidth(20) << left << team->name;
+        ss << reset;
+        auto summ = team->match_summaries[stage].get();
+        for(auto t : summ) {
+            ss << '\t' <<  t ;
+        }
+        ss << endl;
+    }
+    dualPrint(*text, "Result" + QString::number(stage_filename_idx[stage]) + ".txt");
+    delete text;
+}
+
+void Game::t4_t7_showNextTeams(stage_t stage) {
+    QString* text = new QString;
+    QTextStream ss(text);
+    if(stage == FINAL) {
+        ss << teamNameEx(name2team["Champion"]) << endl;
+        dualPrint(*text, "team1.txt");
+    } else {
+        ss << "Qualified for " + stage_name_lowercase[stage + 1] << endl;
+        for(int i = 0; i < stage_team_num[stage + 1]; ++i) {
+            auto t = teams16[i];
+            ss << teamNameEx(t) << endl;
+        }
+        dualPrint(*text, "team" + QString::number(stage_filename_idx[stage]) + ".txt");
+    }
+    delete text;
+}
+
+void Game::t4_t7_knockoutStageMatches(stage_t stage)
+{
+    t4_t7_showKnockoutMatches(stage);
+    t4_t7_playKnockoutMatches(stage);
+    t4_t7_summaryKnockoutMatches(stage);
+    t4_t7_showNextTeams(stage);
+}
+
+void Game::t8_showWholeGameStats() {
+    QString* text = new QString;
+    QTextStream ss(text);
+    ss << "Winners" << endl;
+    ss << "Champion    : " << name2team["Champion"]->name << endl;
+    ss << "Second place: " << name2team["Second"]->name << endl;
+    ss << "Third  place: " << name2team["Third"]->name << endl;
+    ss << "Top ten teams:" << endl;
+    ss << qSetFieldWidth(20) << left << "Team";
+    ss << reset;
+    ss << "\tW\tD\tL\tGF\tGA\tGD\tPts" << endl;
+    for(auto team:teams) {
+        for(int i = 0; i < 5; ++i) {
+            team->match_summaries[5].merge(team->match_summaries[i]);
+        }
+    }
+    auto leader_boards = sortRank(teams, STATS);
+    for(int i = 0; i < 10; ++i) {
+        auto team = leader_boards[i];
+        ss << qSetFieldWidth(20) << left << team->name;
+        ss << reset;
+        auto summ = team->match_summaries[STATS].get();
+        for(auto t : summ) {
+            ss << '\t' <<  t ;
+        }
+        ss << endl;
+    }
+    std::vector<Player*> all_players;
+    for(auto team : teams) {
+        for(int i = 0; i < 23; ++i) {
+            all_players.push_back(team->getFinalPlayers(i));
+        }
+    }
+    std::sort(all_players.begin(), all_players.end(), [](auto p1, auto p2){
+        return p1->scoreNumber > p2->scoreNumber;
+    });
+    for(int i = 0; i < 10; ++i) {
+        ss << all_players[i]->scoreNumber << " goals" << endl;
+        ss << all_players[i]->name << ", " << Player::getRoleString(all_players[i]->role) << ", " <<
+              all_players[i]->nation << endl;
+    }
+    dualPrint(*text, "finalStastics.txt");
+    delete text;
 }

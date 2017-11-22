@@ -24,6 +24,9 @@ public:
     bool is_captain;
     bool is_vice_captain;
     PlayerRole role;
+    static QString getRoleString(PlayerRole role);
+private:
+    static std::map<PlayerRole, QString> role_string;
 };
 
 #endif // PLAYER_H

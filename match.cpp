@@ -3,24 +3,8 @@
 QString showPlayerInfo(const Player* player) {
     QString* text = new QString;
     QTextStream ss(text);
-    ss << "#" << player->index << ", " << playerNameEx(player);
-    switch (player->role) {
-    case PlayerRole::GK:
-        ss << "GK";
-        break;
-    case PlayerRole::DF:
-        ss << "DF";
-        break;
-    case PlayerRole::FW:
-        ss << "FW";
-        break;
-    case PlayerRole::MF:
-        ss << "MF";
-        break;
-    default:
-        break;
-    }
-    ss << endl;
+    ss << "#" << player->index << ", " << playerNameEx(player) << " ";
+    ss << Player::getRoleString(player->role) << endl;
     QString ret(*text);
     delete text;
     return ret;
@@ -31,6 +15,12 @@ QString Match::showPaticipantInfo() {
     QTextStream ss(text);
     auto pteam1 = matchResult.pteam[0];
     auto pteam2 = matchResult.pteam[1];
+    if(this->id == 64) {
+        ss << "This match is the battle of the champions" << endl;
+    }
+    if(this->id == 63) {
+        ss << "This match is the third place play-off" << endl;
+    }
     ss << teamNameEx(pteam1) << " vs " << teamNameEx(pteam2) << endl;
     ss << teamNameEx(pteam1) << endl;
     auto starters1 = pteam1->getStarters();
@@ -63,10 +53,19 @@ QString Match::reportMatchResult() {
         if(score.team == matchResult.pteam[1]) count[1]++;
         ss << "Now it is " << count[0] << ":" << count[1] << endl;
     }
+    auto pwinner_team = matchResult.pteam[matchResult.winner_idx];
+    auto ploser_team = matchResult.pteam[!matchResult.winner_idx];
     if(matchResult.draw)
         ss << "It is a draw with " << count[0] << ":" << count[1] << endl;
     else
-        ss << teamNameEx(matchResult.pteam[matchResult.winner_idx]) << " win with " << count[0] << ":" << count[1] << endl;
+        ss << teamNameEx(pwinner_team) << " win with " << count[0] << ":" << count[1] << endl;
+    if(this->id == 64) {
+        ss << pwinner_team->name << " is the champion, congratulations!" << endl;
+        ss << ploser_team->name << " won the second place." << endl;
+    }
+    if(this->id == 63) {
+        ss << pwinner_team->name << " won the third place." << endl;
+    }
     QString ret(*text);
     delete text;
     return ret;
@@ -127,11 +126,15 @@ QString Match::showMatchInfo(std::map<QString, NationalTeam *> name2team)
         qDebug() << team2;
         throw;
     }
-    ss << pteam1->name << teamNameEx(pteam1) <<
-          (pteam2->name) << teamNameEx(pteam2) << ", " << place << ", " << getMonthDay(time);
+    ss << teamNameEx(pteam1) << " vs " << teamNameEx(pteam2) << ", " << place << ", " << getMonthDay(time);
     QString ret(*text);
     delete text;
     return ret;
+}
+
+MatchResult Match::getMatchResult() const
+{
+    return matchResult;
 }
 
 void Match::judgeWinner() {
@@ -167,6 +170,8 @@ void Match::judgeScoreNumber() {
     }
     auto pteam1 = matchResult.pteam[0];
     auto pteam2 = matchResult.pteam[1];
+    if(stage != GROUP_STAGE && winner_score == 0)
+        winner_score = 1;
     if(winner_score == 0) {
         matchResult.draw = true;
         matchResult.scoreNum[0] = 0;
@@ -180,6 +185,8 @@ void Match::judgeScoreNumber() {
     //std::uniform_int_distribution<int> u(0,10);
     //auto uniform_rand = std::bind(u, e);
     int loser_score = winner_score - (RandLib::uniform_rand() % winner_score);
+    if(stage != GROUP_STAGE && loser_score == winner_score)
+        loser_score = winner_score - 1;
     if(loser_score == winner_score) {
         matchResult.draw = true;
         matchResult.scoreNum[0] = winner_score;

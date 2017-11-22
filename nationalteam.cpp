@@ -17,10 +17,12 @@ std::vector<Player*> NationalTeam::getStarters()
     std::vector<Player*> ret;
     for(int i = 0; i < 11; ++i) {
         auto pplayer = getFinalPlayers(i);
-        if(i < 1) pplayer->role = PlayerRole::GK;
-        else if (i < 4) pplayer->role = PlayerRole::DF;
-        else if (i < 7) pplayer->role = PlayerRole::MF;
-        else pplayer->role = PlayerRole::FW;
+        if(pplayer->role == PlayerRole::NOT_ASSIGNED) {
+            if(i < 1) pplayer->role = PlayerRole::GK;
+            else if (i < 4) pplayer->role = PlayerRole::DF;
+            else if (i < 7) pplayer->role = PlayerRole::MF;
+            else pplayer->role = PlayerRole::FW;
+        }
         ret.push_back(pplayer);
     }
     //unsigned seed = std::chrono::system_clock::now ().time_since_epoch ().count();
@@ -33,6 +35,10 @@ std::vector<Player*> NationalTeam::getStarters()
         vice_captain_idx = RandLib::uniform_rand() % 11;
         if (captain_idx != vice_captain_idx)
             break;
+    }
+    for(auto player : ret) {
+        player->is_captain = false;
+        player->is_vice_captain = false;
     }
     ret[captain_idx]->is_captain = true;
     ret[vice_captain_idx]->is_vice_captain = true;
@@ -54,6 +60,7 @@ void NationalTeam::loadPlayers(QString player_file_name)
         Player* player = new Player;
         player->ID = player_data["ID"].toString().toInt();
         player->name = player_data["Fullname"].toString();
+        player->nation = this->name;
         player->overall = player_data["Overall"].toString().toInt();
         player->potential = player_data["Potential"].toString().toInt();
         player->index = index;

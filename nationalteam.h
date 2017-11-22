@@ -50,6 +50,7 @@ public:
     QString flag;
     QString continent;
     std::vector<Player *> getStarters();
+    Player* getFinalPlayers(int idx);
     Player getReverser(bool is_GK);
     void loadPlayers(QString player_file_name);
     std::array<MatchSummary, 6> match_summaries;
@@ -58,7 +59,6 @@ private:
 #ifdef _MY_DEBUG_
 public:
     std::vector<Player*> all_players;
-    Player* getFinalPlayers(int idx);
     std::vector<Player*> final_players;
 #endif
 

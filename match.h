@@ -24,7 +24,7 @@ auto compare_score_time = [](auto lhs, auto rhs){
 
 enum stage_t {
     GROUP_STAGE = 0, ROUND_OF_16 = 1, QUARTER_FINALS = 2,
-    SEMI_FINALS = 3, Final = 4
+    SEMI_FINALS = 3, FINAL = 4, STATS = 5
 };
 
 class Match
@@ -38,10 +38,11 @@ public:
     QString team2;
     stage_t stage;
     QString showMatchInfo(std::map<QString, NationalTeam*> name2team);
+    MatchResult getMatchResult() const;
+
 private:
     MatchResult matchResult;
     QString getMonthDay(QString time);
-
     std::vector<Player *> judgeScorePlayer(const std::vector<Player *> &ps, int scoreNumber);
     std::vector<int> judegScoreTime();
     void judgeScoreNumber();
