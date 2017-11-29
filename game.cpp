@@ -56,12 +56,15 @@ Game::Game(QString country_file_name, QString player_floder, QString timeplace_f
     std::sort(matches.begin(), matches.end(), [](auto m1, auto m2) {
         return m1->id < m2->id;
     });
+    std::ofstream simfile;
+    simfile.open("simulationLog.txt", std::ios_base::out);
+    simfile.close();
 }
 
 void Game::playGame()
 {
     t1_showQuaified();
-    groups = t2_divideGroups(name2team);
+    t2_divideGroups(name2team);
     t3_groupStageMatches();
     t4_t7_knockoutStageMatches(ROUND_OF_16);
     t4_t7_knockoutStageMatches(QUARTER_FINALS);
@@ -167,16 +170,29 @@ groups_t Game::drawFromPots(name2team_map_t&name2team, const std::array<std::vec
 
 void Game::dualPrint(const QString &text, const QString &filename, bool append)
 {
-    QString text2File(text);
-    QFile file;
-    file.setFileName(filename);
-    if(append)
-        file.open(QIODevice::Text | QIODevice::ReadWrite | QIODevice::Append);
-    else
-        file.open(QIODevice::Text | QIODevice::ReadWrite);
-    QTextStream ss2File(&file);
-    ss2File << text2File;
-    file.close();
+    //QString text2File = text;
+    //QFile file;
+    //file.setFileName(filename);
+    //if(append)
+    //    file.open(QIODevice::Text | QIODevice::ReadWrite | QIODevice::Append);
+    //else
+    //    file.open(QIODevice::Text | QIODevice::ReadWrite);
+    //QTextStream ss2File(&file);
+    //ss2File << text2File;
+    //file.close();
+    if(filename != "") {
+        std::ofstream file;
+        if(append)
+            file.open(filename.toStdString(), std::ios_base::app);
+        else
+            file.open(filename.toStdString(), std::ios_base::out);
+        file << text.toStdString();
+        file.close();
+    }
+    std::ofstream simfile;
+    simfile.open("simulationLog.txt", std::ios_base::app);
+    simfile << text.toStdString();
+    simfile.close();
     std::cout << text.toStdString();
 }
 
@@ -199,10 +215,10 @@ void Game::t1_showQuaified()
     delete text;
 }
 
-groups_t Game::t2_divideGroups(name2team_map_t& name2team)
+void Game::t2_divideGroups(name2team_map_t& name2team)
 {
     pots_t pots = prepare_pots();
-    return drawFromPots(name2team, pots);
+    groups = drawFromPots(name2team, pots);
 }
 
 std::vector<NationalTeam*> Game::sortRank(const std::vector<NationalTeam *> &to_sort, stage_t stage)
@@ -341,7 +357,8 @@ void Game::t3_2_playGroupMatches()
     for(int i = 0; i < 48; ++ i) {
         ss << matches[i]->playMatch(name2team);
     }
-    std::cout << text->toStdString();
+    dualPrint(*text, "");
+//    std::cout << text->toStdString();
     delete text;
 }
 
@@ -434,7 +451,8 @@ void Game::t4_t7_playKnockoutMatches(stage_t stage)
             name2team["Third"] = pwinner_team;
         }
     }
-    std::cout << text->toStdString();
+    dualPrint(*text, "");
+//    std::cout << text->toStdString();
     delete text;
 }
 
@@ -524,8 +542,9 @@ void Game::t8_showWholeGameStats() {
     }
     std::vector<Player*> all_players;
     for(auto team : teams) {
+        auto players = team->getFinalPlayers();
         for(int i = 0; i < 23; ++i) {
-            all_players.push_back(team->getFinalPlayers(i));
+            all_players.push_back(players[i]);
         }
     }
     std::sort(all_players.begin(), all_players.end(), [](auto p1, auto p2){

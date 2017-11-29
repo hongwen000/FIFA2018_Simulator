@@ -10,12 +10,11 @@ QString playerNameEx(const Player* player){
     return ret;
 }
 
-
-std::map<PlayerRole, QString> Player::role_string = {{PlayerRole::GK, "GK"}, {PlayerRole::DF, "DF"},
-                                                    {PlayerRole::MF, "MF"}, {PlayerRole::FW, "FW"}};
-
 QString Player::getRoleString(PlayerRole role) {
-    return role_string[role];
+    if(role == PlayerRole::GK) return "GK";
+    else if (role == PlayerRole::DF) return "DF";
+    else if (role == PlayerRole::MF) return "MF";
+    else return "FW";
 }
 
 int Player::getPower() const {

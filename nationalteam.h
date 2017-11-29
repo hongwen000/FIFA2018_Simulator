@@ -43,25 +43,20 @@ private:
 class NationalTeam
 {
 public:
-    NationalTeam();
-    int world_rank;
-    bool is_host;
-    QString name;
-    QString flag;
-    QString continent;
-    std::vector<Player *> getStarters();
-    Player* getFinalPlayers(int idx);
-    Player getReverser(bool is_GK);
-    void loadPlayers(QString player_file_name);
-    std::array<MatchSummary, 6> match_summaries;
+    int world_rank; 							//!国家队世界排名
+    bool is_host;								//!是否为东道主
+    QString name;								//!队名
+    QString flag;								//!国旗图片地址
+    QString continent;							//!属于哪一足协
+    std::vector<Player *> getStarters();		//!获取一场比赛的首发阵容
+    std::vector<Player *> getFinalPlayers();	//!获取参赛的23人名单
+    void loadPlayers(QString player_file_name);	//!从文件加载队员信息
+    std::array<MatchSummary, 6> match_summaries;//!各比赛阶段赛况汇总
+    //!和各支队伍比赛结果汇总
     std::map<NationalTeam*, MatchSummary> co_country_summaries;
 private:
-#ifdef _MY_DEBUG_
-public:
-    std::vector<Player*> all_players;
-    std::vector<Player*> final_players;
-#endif
-
+    std::vector<Player*> all_players;			//!该国家队所有球员名单
+    std::vector<Player*> final_players;			//!参加世界杯的23人名单
 };
 
 #endif // NATIONALTEAM_H

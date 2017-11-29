@@ -92,7 +92,7 @@ QString Match::playMatch(std::map<QString, NationalTeam *> name2team)
     matchResult.starters[1] = matchResult.pteam[1]->getStarters();
 /*  First Edition
     judgeWinner();
-    judgeScoreNumber();
+    recordScoreNumber();
     auto scoreTime = judegScoreTime();
     auto scorePlayer1 = judgeScorePlayer(matchResult.starters[0], matchResult.scoreNum[0]);
     auto scorePlayer2 = judgeScorePlayer(matchResult.starters[1], matchResult.scoreNum[1]);
@@ -326,7 +326,7 @@ void Match::process() {
             || (scores[0] == scores[1] && matchResult.penalty[0] > matchResult.penalty[1]))
             ? 0 : 1;
 
-    // judgeScoreNumber
+    // recordScoreNumber
     int winner_score = max(scores[0], scores[1]);
     int loser_score = min(scores[0], scores[1]);
     auto pteam1 = matchResult.pteam[0];
@@ -410,6 +410,7 @@ MatchResult Match::getMatchResult() const
     return matchResult;
 }
 
+/*
 void Match::judgeWinner() {
     int total1 = 0;
     int total2 = 0;
@@ -429,8 +430,9 @@ void Match::judgeWinner() {
     int r = RandLib::binomial_rand();
     matchResult.winner_idx = r ? better_team_idx : !better_team_idx;
 }
+*/
 
-void Match::judgeScoreNumber(int winner_score, int loser_score) {
+void Match::recordScoreNumber(int winner_score, int loser_score) {
     //unsigned seed = std::chrono::system_clock::now ().time_since_epoch ().count();
     //std::default_random_engine e(seed);
     //std::normal_distribution<double> n(2.1, 2);
@@ -487,6 +489,7 @@ void Match::judgeScoreNumber(int winner_score, int loser_score) {
     }
 }
 
+/*
 std::vector<int> Match::judegScoreTime() {
     if(matchResult.scoreNum[0] == 0 && matchResult.scoreNum[1] == 0) {
         return std::vector<int>();
@@ -511,7 +514,8 @@ std::vector<int> Match::judegScoreTime() {
     }
     return scoreTime;
 }
-
+*/
+/*
 std::vector<Player*> Match::judgeScorePlayer(const std::vector<Player *> &ps, int scoreNumber) {
     std::vector<Player*> ret;
     for(int i = 0; i < scoreNumber; ++i) {
@@ -531,4 +535,4 @@ std::vector<Player*> Match::judgeScorePlayer(const std::vector<Player *> &ps, in
     }
     return ret;
 }
-
+*/

@@ -32,28 +32,30 @@ enum stage_t {
 class Match
 {
 public:
-    QString playMatch(std::map<QString, NationalTeam*> name2team);
-    int id;
-    QString time;
-    QString place;
-    QString team1;
-    QString team2;
-    stage_t stage;
+    int id;			//!比赛场次
+    QString time;	//!比赛时间
+    QString place;	//!比赛地点
+    QString team1;	//!比赛队伍一名称（别名）
+    QString team2;	//!比赛队伍二名称（别名）
+    stage_t stage;	//!在整场世界杯中所属的阶段
+    //!赛前输出本场比赛的相关信息
     QString showMatchInfo(std::map<QString, NationalTeam*> name2team);
+    //!返回比赛结果
     MatchResult getMatchResult() const;
+    //!进行比赛
+    QString playMatch(std::map<QString, NationalTeam*> name2team);
 
 private:
-    MatchResult matchResult;
-    QString getMonthDay(QString time);
-    std::vector<Player *> judgeScorePlayer(const std::vector<Player *> &ps, int scoreNumber);
-    std::vector<int> judegScoreTime();
-    void judgeScoreNumber(int,int);
-    void judgeWinner();
-    QString showPaticipantInfo();
-    QString reportMatchResult();
-
-    void process();
-    pair<int, int> oneAction(pair<int, int> start);
+    MatchResult matchResult; 			//!存储比赛结果
+    QString getMonthDay(QString time);	//!返回年月格式的比赛日期
+    void recordScoreNumber(int,int);	//!将进球数信息写入相关结构体
+    QString showPaticipantInfo();		//!显示上场球员信息
+    QString reportMatchResult();		//!赛后输出本场比赛的结果信息
+    void process();						//!执行比赛模拟
+    pair<int, int> oneAction(pair<int, int> start); //!模拟比赛中的一次动作
 };
 
+    //void judgeWinner();
+    //std::vector<Player *> judgeScorePlayer(const std::vector<Player *> &ps, int scoreNumber);
+    //std::vector<int> judegScoreTime();
 #endif // MATCH_H

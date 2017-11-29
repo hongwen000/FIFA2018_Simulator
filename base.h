@@ -1,6 +1,8 @@
 #ifndef BASE_H
 #define BASE_H
 #include <QString>
+#include <fstream>
+#include <sstream>
 #include <vector>
 #include <array>
 #include <utility>

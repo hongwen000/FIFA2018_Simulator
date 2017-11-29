@@ -1,10 +1,5 @@
 #include "nationalteam.h"
 
-NationalTeam::NationalTeam()
-{
-
-}
-
 QString teamNameEx(const NationalTeam* team) {
     QString ret(team->name);
     ret += (team->is_host ? " (hosts)" : "");
@@ -15,7 +10,7 @@ QString teamNameEx(const NationalTeam* team) {
 std::vector<Player*> NationalTeam::getStarters()
 {
     std::vector<Player*> ret;
-    getFinalPlayers(0);
+    getFinalPlayers();
     std::sort(final_players.begin(), final_players.end(), [](auto p1, auto p2) {
         return p1->overall > p2->overall;
     });
@@ -103,14 +98,14 @@ void NationalTeam::loadPlayers(QString player_file_name)
 }
 
 //!TODO
-Player* NationalTeam::getFinalPlayers(int idx)
+std::vector<Player*> NationalTeam::getFinalPlayers()
 {
     if(final_players.empty()) {
         std::sort(all_players.begin(), all_players.end(), [](auto p1, auto p2) {
             return p1->overall + p1->potential / 2 > p2->overall + p2->potential / 2;
         });
         bool used[all_players.size()];
-        for(int i = 0; i < all_players.size(); ++i) {
+        for(size_t i = 0; i < all_players.size(); ++i) {
             used[i] = false;
         }
         // GK
@@ -202,7 +197,7 @@ Player* NationalTeam::getFinalPlayers(int idx)
             }
         }
     }
-    return final_players[idx];
+    return final_players;
 }
 
 void MatchSummary::update(int status, int _GF, int _GA)
