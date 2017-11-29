@@ -2,12 +2,15 @@
 #define RANDLIB_H
 #include <random>
 #include <utility>
-
+#include <memory>
+#include <chrono>
 class RandLib {
 public:
     static int binomial_rand();
+    static int binomial_rand(double p);
     static double normal_rand();
     static int uniform_rand();
+    static int uniform_rand(int L, int R);
 private:
     static std::unique_ptr<std::default_random_engine> engine;
     static std::unique_ptr<std::uniform_int_distribution<int> > u;

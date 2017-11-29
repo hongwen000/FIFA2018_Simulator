@@ -15,33 +15,48 @@ QString teamNameEx(const NationalTeam* team) {
 std::vector<Player*> NationalTeam::getStarters()
 {
     std::vector<Player*> ret;
-    for(int i = 0; i < 11; ++i) {
-        auto pplayer = getFinalPlayers(i);
-        if(pplayer->role == PlayerRole::NOT_ASSIGNED) {
-            if(i < 1) pplayer->role = PlayerRole::GK;
-            else if (i < 4) pplayer->role = PlayerRole::DF;
-            else if (i < 7) pplayer->role = PlayerRole::MF;
-            else pplayer->role = PlayerRole::FW;
+    getFinalPlayers(0);
+    std::sort(final_players.begin(), final_players.end(), [](auto p1, auto p2) {
+        return p1->overall > p2->overall;
+    });
+    Player* p;
+    // GK
+    p = nullptr;
+    for(auto it : final_players) {
+        if(it->role == PlayerRole::GK && (p == nullptr || it->overall > p->overall)) {
+            p = it;
         }
-        ret.push_back(pplayer);
     }
-    //unsigned seed = std::chrono::system_clock::now ().time_since_epoch ().count();
-    //std::default_random_engine e(seed);
-    //std::uniform_int_distribution<int> u(0,10);
-    //auto uniform_rand = std::bind(u, e);
-    auto captain_idx = RandLib::uniform_rand() % 11;
-    int vice_captain_idx;
-    while (true) {
-        vice_captain_idx = RandLib::uniform_rand() % 11;
-        if (captain_idx != vice_captain_idx)
-            break;
+    ret.push_back(p);
+    // DF
+    int cnt = 0;
+    for(auto it : final_players) {
+        if(it->role == PlayerRole::DF) {
+            ret.push_back(it);
+            cnt++;
+            if(cnt == 4) break;
+        }
     }
-    for(auto player : ret) {
-        player->is_captain = false;
-        player->is_vice_captain = false;
+    //MF
+    cnt = 0;
+    for(auto it : final_players) {
+        if(it->role == PlayerRole::MF) {
+            ret.push_back(it);
+            cnt++;
+            if(cnt == 3) break;
+        }
     }
-    ret[captain_idx]->is_captain = true;
-    ret[vice_captain_idx]->is_vice_captain = true;
+
+    cnt = 0;
+    for(auto it : final_players) {
+        if(it->role == PlayerRole::FW) {
+            ret.push_back(it);
+            cnt++;
+            if(cnt == 3) break;
+        }
+    }
+    ret[0]->is_captain = true;
+    ret[6]->is_vice_captain = true;
     return ret;
 }
 
@@ -64,6 +79,23 @@ void NationalTeam::loadPlayers(QString player_file_name)
         player->overall = player_data["Overall"].toString().toInt();
         player->potential = player_data["Potential"].toString().toInt();
         player->index = index;
+        QString pos = player_data["Preferred Positions"].toString();
+        for(int i = 0; i < 4; ++i) {
+            player->can_play[i] = false;
+        }
+        if(pos.contains(QRegExp("GK"))) {
+            player->can_play[0] = true;
+        }
+        if(pos.contains(QRegExp("(RS|ST|LS|RW|LW|RF|CF|LF)"))) {
+            player->can_play[3] = true;
+        }
+        if (pos.contains(QRegExp("(RAM|CAM|LAM|RCM|CM|LCM|RM|LM|RDM|CDM|LDM)"))) {
+            player->can_play[2] = true;
+        }
+        if (pos.contains(QRegExp("(RCB|CB|LCB|RB|LB|RWB|LWB)"))) {
+            player->can_play[1] = true;
+        }
+
         ++index;
         all_players.push_back(player);
     }
@@ -74,8 +106,100 @@ void NationalTeam::loadPlayers(QString player_file_name)
 Player* NationalTeam::getFinalPlayers(int idx)
 {
     if(final_players.empty()) {
-        for(int i = 0; i < 23; ++i) {
-            final_players.push_back(all_players[i]);
+        std::sort(all_players.begin(), all_players.end(), [](auto p1, auto p2) {
+            return p1->overall + p1->potential / 2 > p2->overall + p2->potential / 2;
+        });
+        bool used[all_players.size()];
+        for(int i = 0; i < all_players.size(); ++i) {
+            used[i] = false;
+        }
+        // GK
+        int cnt = 0;
+        for (auto it = all_players.begin(); it != all_players.end(); ++it) {
+            if((*it)->can_play[0] && !(used[std::distance(all_players.begin(), it)])) {
+                used[std::distance(all_players.begin(), it)] = true;
+                (*it)->role = PlayerRole::GK;
+                final_players.push_back(*it);
+                cnt++;
+                if(cnt == 3) break;
+            }
+        }
+        if(cnt < 3) {
+            for (auto it = all_players.begin(); it != all_players.end(); ++it) {
+                if(!(used[std::distance(all_players.begin(), it)])) {
+                    used[std::distance(all_players.begin(), it)] = true;
+                    (*it)->role = PlayerRole::GK;
+                    final_players.push_back(*it);
+                    cnt++;
+                    if(cnt == 3) break;
+                }
+            }
+        }
+        // DF
+        cnt = 0;
+        for (auto it = all_players.begin(); it != all_players.end(); ++it) {
+            if((*it)->can_play[1] && !(used[std::distance(all_players.begin(), it)])) {
+                used[std::distance(all_players.begin(), it)] = true;
+                (*it)->role = PlayerRole::DF;
+                final_players.push_back(*it);
+                cnt++;
+                if(cnt == 8) break;
+            }
+        }
+        if(cnt < 8) {
+            for (auto it = all_players.begin(); it != all_players.end(); ++it) {
+                if(!(used[std::distance(all_players.begin(), it)])) {
+                    used[std::distance(all_players.begin(), it)] = true;
+                    (*it)->role = PlayerRole::DF;
+                    final_players.push_back(*it);
+                    cnt++;
+                    if(cnt == 8) break;
+                }
+            }
+        }
+         // MF
+        cnt = 0;
+        for (auto it = all_players.begin(); it != all_players.end(); ++it) {
+            if((*it)->can_play[2] && !(used[std::distance(all_players.begin(), it)])) {
+                used[std::distance(all_players.begin(), it)] = true;
+                (*it)->role = PlayerRole::MF;
+                final_players.push_back(*it);
+                cnt++;
+                if(cnt == 6) break;
+            }
+        }
+        if(cnt < 6) {
+            for (auto it = all_players.begin(); it != all_players.end(); ++it) {
+                if(!(used[std::distance(all_players.begin(), it)])) {
+                    used[std::distance(all_players.begin(), it)] = true;
+                    (*it)->role = PlayerRole::MF;
+                    final_players.push_back(*it);
+                    cnt++;
+                    if(cnt == 6) break;
+                }
+            }
+        }
+        // FW
+        cnt = 0;
+        for (auto it = all_players.begin(); it != all_players.end(); ++it) {
+            if((*it)->can_play[3] && !(used[std::distance(all_players.begin(), it)])) {
+                used[std::distance(all_players.begin(), it)] = true;
+                (*it)->role = PlayerRole::FW;
+                final_players.push_back(*it);
+                cnt++;
+                if(cnt == 6) break;
+            }
+        }
+        if(cnt < 6) {
+            for (auto it = all_players.begin(); it != all_players.end(); ++it) {
+                if(!(used[std::distance(all_players.begin(), it)])) {
+                    used[std::distance(all_players.begin(), it)] = true;
+                    (*it)->role = PlayerRole::FW;
+                    final_players.push_back(*it);
+                    cnt++;
+                    if(cnt == 6) break;
+                }
+            }
         }
     }
     return final_players[idx];

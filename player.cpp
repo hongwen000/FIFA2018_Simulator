@@ -1,4 +1,5 @@
 #include "player.h"
+using std::min;
 
 QString playerNameEx(const Player* player){
     QString ret = player->name;
@@ -15,4 +16,10 @@ std::map<PlayerRole, QString> Player::role_string = {{PlayerRole::GK, "GK"}, {Pl
 
 QString Player::getRoleString(PlayerRole role) {
     return role_string[role];
+}
+
+int Player::getPower() const {
+    int tmp = RandLib::uniform_rand(0, 100);
+    double ans = overall + potential * tmp / 10000.0;
+    return min(ans, 100.0);
 }

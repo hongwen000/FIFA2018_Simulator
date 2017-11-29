@@ -17,6 +17,16 @@ int RandLib::binomial_rand()
 
 }
 
+int RandLib::binomial_rand(double p)
+{
+    if(!engine) {
+        unsigned seed = std::chrono::system_clock::now ().time_since_epoch ().count();
+        engine = std::make_unique<std::default_random_engine>(seed);
+    }
+    std::binomial_distribution<> d(1, p);
+    return d(*engine);
+}
+
 double RandLib::normal_rand()
 {
     if(!engine) {
@@ -27,7 +37,6 @@ double RandLib::normal_rand()
         n = std::make_unique<std::normal_distribution<double> >(2.1, 1.5);
     }
     return (*n)(*engine);
-
 }
 
 int RandLib::uniform_rand()
@@ -42,3 +51,12 @@ int RandLib::uniform_rand()
     return (*u)(*engine);
 }
 
+int RandLib::uniform_rand(int L, int R)
+{
+    if(!engine) {
+        unsigned seed = std::chrono::system_clock::now ().time_since_epoch ().count();
+        engine = std::make_unique<std::default_random_engine> (seed);
+    }
+    std::uniform_int_distribution<> dis(L,R);
+    return dis(*engine);
+}

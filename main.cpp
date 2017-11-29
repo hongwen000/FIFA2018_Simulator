@@ -18,8 +18,12 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 //    MainWindow w;
 //    w.show();
-    Game fifa;
-    fifa.playGame();
+//    while(1)
+    {
+        Game fifa;
+        fifa.playGame();
+    }
+
 
     return 0;
     //return a.exec();

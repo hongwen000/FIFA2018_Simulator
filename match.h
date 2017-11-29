@@ -2,12 +2,14 @@
 #define MATCH_H
 #include "base.h"
 #include "nationalteam.h"
+using std::pair;
 
 
 struct MatchResult {
     int winner_idx;
     bool draw;
     int scoreNum[2];
+    int penalty[2];
     NationalTeam* pteam[2];
     std::array<std::vector<Player*>, 2> starters;
     struct scoreInfo_t{
@@ -45,10 +47,13 @@ private:
     QString getMonthDay(QString time);
     std::vector<Player *> judgeScorePlayer(const std::vector<Player *> &ps, int scoreNumber);
     std::vector<int> judegScoreTime();
-    void judgeScoreNumber();
+    void judgeScoreNumber(int,int);
     void judgeWinner();
     QString showPaticipantInfo();
     QString reportMatchResult();
+
+    void process();
+    pair<int, int> oneAction(pair<int, int> start);
 };
 
 #endif // MATCH_H
