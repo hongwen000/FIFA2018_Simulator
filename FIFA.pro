@@ -6,6 +6,8 @@
 
 QT       += core
 QT	 -= gui
+CONFIG += console
+CONFIG -= app_bundle
 CONFIG += c++14
 CONFIG += std=c++14
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -45,3 +47,5 @@ HEADERS += \
 
 FORMS += \
         mainwindow.ui
+
+RC_ICONS = icon.ico
