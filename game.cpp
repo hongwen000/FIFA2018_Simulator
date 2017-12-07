@@ -61,16 +61,80 @@ Game::Game(QString country_file_name, QString player_floder, QString timeplace_f
     simfile.close();
 }
 
-void Game::playGame()
+std::string Game::playGame(std::string choice)
 {
-    t1_showQuaified();
-    t2_divideGroups(name2team);
-    t3_groupStageMatches();
-    t4_t7_knockoutStageMatches(ROUND_OF_16);
-    t4_t7_knockoutStageMatches(QUARTER_FINALS);
-    t4_t7_knockoutStageMatches(SEMI_FINALS);
-    t4_t7_knockoutStageMatches(FINAL);
-    t8_showWholeGameStats();
+    int now_stage = 0;
+    int expected_stage = 0;
+    if(choice == "0") {
+        std::cout << "Please choose which simulation stage you want to show?" << std::endl;
+        std::cout << "Input q to exit" << std::endl;
+        std::cout << "Input n to proceed to next stage" << std::endl;
+        std::cout << "Input 1 to show quaified teams" << std::endl;
+        std::cout << "Input 2 to show groups" << std::endl;
+        std::cout << "Input 3 to show group stage matches" << std::endl;
+        std::cout << "Input 4 to show round of 16 matches" << std::endl;
+        std::cout << "Input 5 to show quarter final matches" << std::endl;
+        std::cout << "Input 6 to show semi final matches" << std::endl;
+        std::cout << "Input 7 to show final matches" << std::endl;
+        std::cout << "Input 8 to show whole game statics" << std::endl;
+    }
+    while (true) {
+        if(choice[0] != 'r') {
+            std::cout << "Please input >";
+            std::cin >> choice;
+            if(choice.length() != 1 || ((choice[0] >'8' || choice[0] < '1') && choice[0] != 'q' && choice[0] != 'n')) {
+                std::cout << "Wrong input" << std::endl;
+                continue;
+            }
+            if(choice == "q") {
+                std::cout << "Goodbye" << std::endl;
+                return "q";
+            }
+            if(choice == "n") {
+                expected_stage++;
+            } else
+                expected_stage = choice[0] - '0';
+        } else {
+            expected_stage = choice[1] -'0';
+            choice = "0";
+        }
+        if(expected_stage < now_stage) {
+            std::cout << "Already execuated stage " << choice <<", so simulation will restart to redo it" << std::endl;
+            return "r" + choice;
+        }
+        if(now_stage < 1 && expected_stage >= 1) {
+            t1_showQuaified();
+            now_stage = 1;
+        }
+        if(now_stage < 2 && expected_stage >= 2) {
+            t2_divideGroups(name2team);
+            now_stage = 2;
+        }
+        if(now_stage < 3 && expected_stage >= 3) {
+            t3_groupStageMatches();
+            now_stage = 3;
+        }
+        if(now_stage < 4 && expected_stage >= 4) {
+            t4_t7_knockoutStageMatches(ROUND_OF_16);
+            now_stage = 4;
+        }
+        if(now_stage < 5 && expected_stage >= 5) {
+            t4_t7_knockoutStageMatches(QUARTER_FINALS);
+            now_stage = 5;
+        }
+        if(now_stage < 6 && expected_stage >= 6) {
+            t4_t7_knockoutStageMatches(SEMI_FINALS);
+            now_stage = 6;
+        }
+        if(now_stage < 7 && expected_stage >= 7) {
+            t4_t7_knockoutStageMatches(FINAL);
+            now_stage = 7;
+        }
+        if(now_stage < 8 && expected_stage >= 8) {
+            t8_showWholeGameStats();
+            now_stage = 8;
+        }
+    }
 }
 
 pots_t Game::prepare_pots()
@@ -124,34 +188,49 @@ bool Game::checkDraw(const groups_t &groups)
     return true;
 }
 //!TODO
-groups_t Game::drawFromPots(name2team_map_t&name2team, const std::array<std::vector<NationalTeam *>, 4> &pots)
+groups_t Game::drawFromPots(name2team_map_t&name2team, const std::array<std::vector<NationalTeam *>, 4> &pots, QString group_file_name)
 {
     QString* text = new QString;
     QTextStream ss(text);
-    std::vector<int> perm;
     groups_t groups;
-    while (true) {
-        perm.clear();
-        for(int i = 0; i < 8; ++i)
-            groups[i].clear();
-        for(int i = 0; i < 32; ++i)
-            perm.push_back(i);
-        unsigned seed = std::chrono::system_clock::now ().time_since_epoch ().count();
-        std::shuffle (perm.begin (), perm.end(), std::default_random_engine (seed));
-        std::vector<NationalTeam*> seq;
-        for(int i = 0; i < 32; ++i) {
-            if(perm[i] == 0)
-                std::swap(perm[0], perm[i]);
-        }
-        for(int i = 0; i < 4; ++i)
-            for(auto t : pots[i])
-                seq.push_back(t);
 
-        for(int i = 0; i < 32; ++i) {
-            groups[i / 4].push_back(seq[perm[i]]);
+    if(group_file_name == "") {
+        std::vector<int> perm;
+        while (true) {
+            perm.clear();
+            for(int i = 0; i < 8; ++i)
+                groups[i].clear();
+            for(int i = 0; i < 32; ++i)
+                perm.push_back(i);
+            unsigned seed = std::chrono::system_clock::now ().time_since_epoch ().count();
+            std::shuffle (perm.begin (), perm.end(), std::default_random_engine (seed));
+            std::vector<NationalTeam*> seq;
+            for(int i = 0; i < 32; ++i) {
+                if(perm[i] == 0)
+                    std::swap(perm[0], perm[i]);
+            }
+            for(int i = 0; i < 4; ++i)
+                for(auto t : pots[i])
+                    seq.push_back(t);
+
+            for(int i = 0; i < 32; ++i) {
+                groups[i / 4].push_back(seq[perm[i]]);
+            }
+            if(checkDraw(groups))
+                break;
         }
-        if(checkDraw(groups))
-            break;
+    }
+    else {
+        QFile group_file;
+        group_file.setFileName(group_file_name);
+        group_file.open(QIODevice::ReadOnly | QIODevice::Text);
+        QTextStream in(&group_file);
+        int i = 0;
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            groups[i / 4].push_back(name2team[line]);
+            i++;
+        }
     }
     ss << "The Final Draw" << endl;
     for(int i = 0; i < 8; ++i) {
@@ -218,7 +297,7 @@ void Game::t1_showQuaified()
 void Game::t2_divideGroups(name2team_map_t& name2team)
 {
     pots_t pots = prepare_pots();
-    groups = drawFromPots(name2team, pots);
+    groups = drawFromPots(name2team, pots, "group.txt");
 }
 
 std::vector<NationalTeam*> Game::sortRank(const std::vector<NationalTeam *> &to_sort, stage_t stage)

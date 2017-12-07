@@ -15,7 +15,7 @@ class Game
 public:
     //!构造函数，从默认从CountryData.json中读取参赛国家，从Players文件夹下读取各国球员信息，从MatchTimePlace.json中读取比赛时间日期
     Game(QString country_file_name = "./CountryData.json", QString player_floder = "Players", QString timeplace_file_name = "MatchTimePlace.json");
-    void playGame();    				//!执行世界杯预演全过程
+    std::string playGame(std::string choice);    			//!执行世界杯预演全过程
 private:
     name2team_map_t name2team;				//!记录球队“别名”到具体球队的映射关系
     std::vector<NationalTeam*> teams;		//!储存所有队伍
@@ -24,7 +24,7 @@ private:
     groups_t groups;						//!储存小组赛分组情况
     pots_t prepare_pots();					//!准备抽签罐子
     //!从罐子执行抽签
-    groups_t drawFromPots(name2team_map_t& name2team, const pots_t& pots);
+    groups_t drawFromPots(name2team_map_t& name2team, const pots_t& pots, QString group_file_name = "");
     bool checkDraw(const groups_t& groups); //!检查抽签结果是否合理
     //!同时向文件和标准输出进行输出
     void dualPrint(const QString& text, const QString& filename, bool append = false);

@@ -29,7 +29,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
     player.cpp \
     nationalteam.cpp \
     match.cpp \
@@ -37,7 +36,6 @@ SOURCES += \
     randlib.cpp
 
 HEADERS += \
-        mainwindow.h \
     player.h \
     base.h \
     nationalteam.h \
@@ -45,7 +43,6 @@ HEADERS += \
     game.h \
     randlib.h
 
-FORMS += \
-        mainwindow.ui
+FORMS +=
 
 RC_ICONS = icon.ico
