@@ -4,9 +4,9 @@ Game::Game(QString country_file_name, QString player_floder, QString timeplace_f
 {
     QString country_string;
     QFile country_file;
-#ifdef Q_OS_MAC
-    QDir::setCurrent("../../../");
-#endif
+//#ifdef Q_OS_MAC
+//    QDir::setCurrent("../../../");
+//#endif
     country_file.setFileName(country_file_name);
     country_file.open(QIODevice::ReadOnly | QIODevice::Text);
     country_string = country_file.readAll();
@@ -302,6 +302,7 @@ void Game::t2_divideGroups(name2team_map_t& name2team)
 
 std::vector<NationalTeam*> Game::sortRank(const std::vector<NationalTeam *> &to_sort, stage_t stage)
 {
+    //并查集
     std::map<NationalTeam*, NationalTeam*> disjoint_father;
     for(auto pteam : to_sort) {
         disjoint_father[pteam] = pteam;
@@ -320,6 +321,7 @@ std::vector<NationalTeam*> Game::sortRank(const std::vector<NationalTeam *> &to_
             disjoint_father[t1Root] = t2Root;
     };
     std::set<NationalTeam*> equal;
+    //规则A-C
     auto _rule_a_to_c = [&](const std::pair<MatchSummary, NationalTeam*>& t1, const std::pair<MatchSummary, NationalTeam*>& t2, bool side_effect) {
         if(t1.first.getPts() != t2.first.getPts()) {
             return t1.first.getPts() > t2.first.getPts();
@@ -340,6 +342,7 @@ std::vector<NationalTeam*> Game::sortRank(const std::vector<NationalTeam *> &to_
     auto rule_a_to_c_side_effect  = std::bind(_rule_a_to_c, _1, _2, true);
     auto rule_a_to_c_without_side_effect  = std::bind(_rule_a_to_c, _1, _2, false);
 
+    //规则D-H
     auto rule_d_to_h = [&](const std::pair<MatchSummary, NationalTeam*>& t1, const std::pair<MatchSummary, NationalTeam*>& t2) {
         if(t1.first.getPts() != t2.first.getPts()) {
             return t1.first.getPts() > t2.first.getPts();
@@ -354,6 +357,7 @@ std::vector<NationalTeam*> Game::sortRank(const std::vector<NationalTeam *> &to_
         }
     };
 
+    //打包器
     auto _packer = [&](const std::vector<NationalTeam*>& to_sort, bool concerned) {
         std::vector<std::pair<MatchSummary, NationalTeam*> > ret;
         for(NationalTeam* pteam : to_sort) {
@@ -375,8 +379,12 @@ std::vector<NationalTeam*> Game::sortRank(const std::vector<NationalTeam *> &to_
     };
     auto packer_concerned_team  = std::bind(_packer, _1, true);
     auto packer_whole_stage  = std::bind(_packer, _1, false);
+
+    //采用规则A-C排序
     auto packed = packer_whole_stage(to_sort);
-    std::sort(packed.begin(), packed.end(), rule_a_to_c_side_effect);
+    std::stable_sort(packed.begin(), packed.end(), rule_a_to_c_side_effect);
+
+    //对于小组赛进一步排序
     if(stage == GROUP_STAGE) {
         while(!equal.empty()) {
             std::vector<NationalTeam*> to_sort_still_equal;
@@ -406,6 +414,8 @@ std::vector<NationalTeam*> Game::sortRank(const std::vector<NationalTeam *> &to_
             }
         }
     }
+
+    //返回排好的
     std::vector<NationalTeam*> sorted;
     for(auto p : packed)
         sorted.push_back(p.second);

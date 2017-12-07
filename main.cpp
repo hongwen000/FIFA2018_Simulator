@@ -5,9 +5,9 @@ int main(int argc, char *argv[])
 
     QCoreApplication a(argc, argv);
 
-    Game fifa;
     std::string choice = "0";
     while (choice != "q") {
+        Game fifa;
         choice = fifa.playGame(choice);
     }
     return 0;
