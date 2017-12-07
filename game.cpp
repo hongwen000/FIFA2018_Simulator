@@ -382,7 +382,10 @@ std::vector<NationalTeam*> Game::sortRank(const std::vector<NationalTeam *> &to_
 
     //采用规则A-C排序
     auto packed = packer_whole_stage(to_sort);
-    std::stable_sort(packed.begin(), packed.end(), rule_a_to_c_side_effect);
+    if(stage == GROUP_STAGE || stage == STATS)
+        std::sort(packed.begin(), packed.end(), rule_a_to_c_side_effect);
+    else
+        std::sort(packed.begin(), packed.begin() + stage_team_num[stage], rule_a_to_c_without_side_effect);
 
     //对于小组赛进一步排序
     if(stage == GROUP_STAGE) {
