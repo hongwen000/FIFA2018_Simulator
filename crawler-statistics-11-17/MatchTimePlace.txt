@@ -1,0 +1,384 @@
+14 June 2018 
+18:00 MSK ( UTC+3 ) 
+Russia  
+1
+A2
+Luzhniki Stadium , Moscow
+15 June 2018 
+17:00 YEKT ( UTC+5 ) 
+A3
+2
+A4
+Central Stadium , Yekaterinburg
+19 June 2018 
+21:00 MSK ( UTC+3 ) 
+Russia  
+17
+A3
+Krestovsky Stadium , Saint Petersburg
+20 June 2018 
+18:00 MSK ( UTC+3 ) 
+A4
+18
+A2
+Rostov Arena , Rostov-on-Don
+25 June 2018 
+18:00 SAMT ( UTC+4 ) 
+A4
+33
+Russia
+Cosmos Arena , Samara
+25 June 2018 
+17:00 MSK ( UTC+3 ) 
+A2
+34
+A3
+Volgograd Arena , Volgograd
+15 June 2018 
+18:00 MSK ( UTC+3 ) 
+B3
+4
+B4
+Krestovsky Stadium , Saint Petersburg
+15 June 2018 
+21:00 MSK ( UTC+3 ) 
+B1
+3
+B2
+Fisht Olympic Stadium , Sochi
+20 June 2018 
+15:00 MSK ( UTC+3 ) 
+B1
+19
+B3
+Luzhniki Stadium , Moscow
+20 June 2018 
+21:00 MSK ( UTC+3 ) 
+B4
+20
+B2
+Kazan Arena , Kazan
+25 June 2018 
+21:00 MSK ( UTC+3 ) 
+B4
+35
+B1
+Mordovia Arena , Saransk
+25 June 2018 
+20:00 KALT ( UTC+2 ) 
+B2
+36
+B3
+Kaliningrad Stadium , Kaliningrad
+16 June 2018 
+13:00 MSK ( UTC+3 ) 
+C1
+5
+C2
+Kazan Arena , Kazan
+16 June 2018 
+19:00 MSK ( UTC+3 ) 
+C3
+6
+C4
+Mordovia Arena , Saransk
+21 June 2018 
+17:00 YEKT ( UTC+5 ) 
+C1
+21
+C3
+Central Stadium , Yekaterinburg
+21 June 2018 
+19:00 SAMT ( UTC+4 ) 
+C4
+22
+C2
+Cosmos Arena , Samara
+26 June 2018 
+17:00 MSK ( UTC+3 ) 
+C4
+37
+C1
+Luzhniki Stadium , Moscow
+26 June 2018 
+17:00 MSK ( UTC+3 ) 
+C2
+38
+C3
+Fisht Olympic Stadium , Sochi
+16 June 2018 
+16:00 MSK ( UTC+3 ) 
+D1
+7
+D2
+Otkrytiye Arena , Moscow
+16 June 2018 
+21:00 KALT ( UTC+2 ) 
+D3
+8
+D4
+Kaliningrad Stadium , Kaliningrad
+21 June 2018 
+21:00 MSK ( UTC+3 ) 
+D1
+23
+D3
+Nizhny Novgorod Stadium , Nizhny Novgorod
+22 June 2018 
+18:00 MSK ( UTC+3 ) 
+D4
+24
+D2
+Volgograd Arena , Volgograd
+26 June 2018 
+21:00 MSK ( UTC+3 ) 
+D4
+39
+D1
+Krestovsky Stadium , Saint Petersburg
+26 June 2018 
+21:00 MSK ( UTC+3 ) 
+D2
+40
+D3
+Rostov Arena , Rostov-on-Don
+17 June 2018 
+16:00 SAMT ( UTC+4 ) 
+E3
+10
+E4
+Cosmos Arena , Samara
+17 June 2018 
+21:00 MSK ( UTC+3 ) 
+E1
+9
+E2
+Rostov Arena , Rostov-on-Don
+22 June 2018 
+15:00 MSK ( UTC+3 ) 
+E1
+25
+E3
+Krestovsky Stadium , Saint Petersburg
+22 June 2018 
+20:00 KALT ( UTC+2 ) 
+E4
+26
+E2
+Kaliningrad Stadium , Kaliningrad
+27 June 2018 
+21:00 MSK ( UTC+3 ) 
+E4
+41
+E1
+Otkrytiye Arena , Moscow
+27 June 2018 
+21:00 MSK ( UTC+3 ) 
+E2
+42
+E3
+Nizhny Novgorod Stadium , Nizhny Novgorod
+17 June 2018 
+18:00 MSK ( UTC+3 ) 
+F1
+11
+F2
+Luzhniki Stadium , Moscow
+18 June 2018 
+15:00 MSK ( UTC+3 ) 
+F3
+12
+F4
+Nizhny Novgorod Stadium , Nizhny Novgorod
+23 June 2018 
+18:00 MSK ( UTC+3 ) 
+F1
+27
+F3
+Fisht Olympic Stadium , Sochi
+23 June 2018 
+21:00 MSK ( UTC+3 ) 
+F4
+28
+F2
+Rostov Arena , Rostov-on-Don
+27 June 2018 
+17:00 MSK ( UTC+3 ) 
+F4
+43
+F1
+Kazan Arena , Kazan
+27 June 2018 
+19:00 YEKT ( UTC+5 ) 
+F2
+44
+F3
+Central Stadium , Yekaterinburg
+18 June 2018 
+18:00 MSK ( UTC+3 ) 
+G1
+13
+G2
+Fisht Olympic Stadium , Sochi
+18 June 2018 
+21:00 MSK ( UTC+3 ) 
+G3
+14
+G4
+Volgograd Arena , Volgograd
+23 June 2018 
+15:00 MSK ( UTC+3 ) 
+G1
+29
+G3
+Otkrytiye Arena , Moscow
+24 June 2018 
+15:00 MSK ( UTC+3 ) 
+G4
+30
+G2
+Nizhny Novgorod Stadium , Nizhny Novgorod
+28 June 2018 
+20:00 KALT ( UTC+2 ) 
+G4
+45
+G1
+Kaliningrad Stadium , Kaliningrad
+28 June 2018 
+21:00 MSK ( UTC+3 ) 
+G2
+46
+G3
+Mordovia Arena , Saransk
+19 June 2018 
+15:00 MSK ( UTC+3 ) 
+H1
+15
+H2
+Otkrytiye Arena , Moscow
+19 June 2018 
+18:00 MSK ( UTC+3 ) 
+H3
+16
+H4
+Mordovia Arena , Saransk
+24 June 2018 
+20:00 YEKT ( UTC+5 ) 
+H4
+32
+H2
+Central Stadium , Yekaterinburg
+24 June 2018 
+21:00 MSK ( UTC+3 ) 
+H1
+31
+H3
+Kazan Arena , Kazan
+28 June 2018 
+17:00 MSK ( UTC+3 ) 
+H4
+47
+H1
+Volgograd Arena , Volgograd
+28 June 2018 
+18:00 SAMT ( UTC+4 ) 
+H2
+48
+H3
+Cosmos Arena , Samara
+30 June 2018 
+17:00 MSK ( UTC+3 ) 
+Winner Group C
+50
+Runner-up Group D
+Kazan Arena , Kazan
+30 June 2018 
+21:00 MSK ( UTC+3 ) 
+Winner Group A
+49
+Runner-up Group B
+Fisht Olympic Stadium , Sochi
+1 July 2018 
+17:00 MSK ( UTC+3 ) 
+Winner Group B
+51
+Runner-up Group A
+Luzhniki Stadium , Moscow
+1 July 2018 
+21:00 MSK ( UTC+3 ) 
+Winner Group D
+52
+Runner-up Group C
+Nizhny Novgorod Stadium , Nizhny Novgorod
+2 July 2018 
+18:00 SAMT ( UTC+4 ) 
+Winner Group E
+53
+Runner-up Group F
+Cosmos Arena , Samara
+2 July 2018 
+21:00 MSK ( UTC+3 ) 
+Winner Group G
+54
+Runner-up Group H
+Rostov Arena , Rostov-on-Don
+3 July 2018 
+17:00 MSK ( UTC+3 ) 
+Winner Group F
+55
+Runner-up Group E
+Krestovsky Stadium , Saint Petersburg
+3 July 2018 
+21:00 MSK ( UTC+3 ) 
+Winner Group H
+56
+Runner-up Group G
+Otkrytiye Arena , Moscow
+6 July 2018 
+17:00 MSK ( UTC+3 ) 
+Winner Match 49
+57
+Winner Match 50
+Nizhny Novgorod Stadium , Nizhny Novgorod
+6 July 2018 
+21:00 MSK ( UTC+3 ) 
+Winner Match 53
+58
+Winner Match 54
+Kazan Arena , Kazan
+7 July 2018 
+18:00 SAMT ( UTC+4 ) 
+Winner Match 55
+60
+Winner Match 56
+Cosmos Arena , Samara
+7 July 2018 
+21:00 MSK ( UTC+3 ) 
+Winner Match 51
+59
+Winner Match 52
+Fisht Olympic Stadium , Sochi
+10 July 2018 
+21:00 MSK ( UTC+3 ) 
+Winner Match 57
+61
+Winner Match 58
+Krestovsky Stadium , Saint Petersburg
+11 July 2018 
+21:00 MSK ( UTC+3 ) 
+Winner Match 59
+62
+Winner Match 60
+Luzhniki Stadium , Moscow
+14 July 2018 
+17:00 MSK ( UTC+3 ) 
+Loser Match 61
+63
+Loser Match 62
+Krestovsky Stadium , Saint Petersburg
+15 July 2018 
+18:00 MSK ( UTC+3 ) 
+Winner Match 61
+64
+Winner Match 62
+Luzhniki Stadium , Moscow
